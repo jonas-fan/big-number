@@ -15,7 +15,7 @@
 namespace Large
 {
 
-    Large::LargeNumber ComputingHandler::add(const LargeNumber &lhs, const LargeNumber &rhs)
+    LargeNumber ComputingHandler::add(const LargeNumber &lhs, const LargeNumber &rhs)
     {
         LargeNumberType retval;
         const LargeNumberType &x = lhs._num;
@@ -33,10 +33,10 @@ namespace Large
         if (carry)
             retval.push(carry);
 
-        return LargeNumber(retval);
+        return retval;
     }
 
-    Large::LargeNumber ComputingHandler::sub(const LargeNumber &lhs, const LargeNumber &rhs)
+    LargeNumber ComputingHandler::sub(const LargeNumber &lhs, const LargeNumber &rhs)
     {
         LargeNumberType retval;
         const LargeNumberType &x = lhs._num;
@@ -64,10 +64,10 @@ namespace Large
         while (index && retval.at(index--) == 0)
             retval.pop();
 
-        return LargeNumber(retval);
+        return retval;
     }
 
-    Large::LargeNumber ComputingHandler::mul(const LargeNumber &lhs, const LargeNumber &rhs)
+    LargeNumber ComputingHandler::mul(const LargeNumber &lhs, const LargeNumber &rhs)
     {
         LargeNumberType retval;
         const LargeNumberType &x = lhs._num;
@@ -97,10 +97,10 @@ namespace Large
         while (index && retval.at(index--) == 0)
             retval.pop();
 
-        return LargeNumber(retval);
+        return retval;
     }
 
-    Large::LargeNumber ComputingHandler::div(const LargeNumber &lhs, const LargeNumber &rhs)
+    LargeNumber ComputingHandler::div(const LargeNumber &lhs, const LargeNumber &rhs)
     {
         LargeNumber retval;
         LargeNumber x(lhs);
@@ -110,7 +110,7 @@ namespace Large
             std::string initializer(index, '0');
 
             for (int number = 9; number > 0; --number) {
-                initializer.at(0) = number + '0';
+                initializer.at(0) = Large::i2C(number);
 
                 LargeNumber buff(initializer);
                 LargeNumber divisor(y * buff);
@@ -123,7 +123,7 @@ namespace Large
             }
         }
 
-        return LargeNumber(retval);
+        return retval;
     }
 
 }
