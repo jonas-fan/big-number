@@ -23,7 +23,6 @@ namespace Large
 
     class LargeNumber
     {
-
     private:
         LargeNumberType _num;
 
@@ -45,22 +44,21 @@ namespace Large
         LargeNumber & div(const LargeNumber &rhs);
 
         friend class ComputingHandler;
-
-        friend LargeNumber operator+ (const LargeNumber &lhs, const LargeNumber &rhs);
-        friend LargeNumber operator- (const LargeNumber &lhs, const LargeNumber &rhs);
-        friend LargeNumber operator* (const LargeNumber &lhs, const LargeNumber &rhs);
-        friend LargeNumber operator/ (const LargeNumber &lhs, const LargeNumber &rhs);
-
-        friend bool operator> (const LargeNumber &lhs, const LargeNumber &rhs);
-        friend bool operator< (const LargeNumber &lhs, const LargeNumber &rhs);
-        friend bool operator>= (const LargeNumber &lhs, const LargeNumber &rhs);
-        friend bool operator<= (const LargeNumber &lhs, const LargeNumber &rhs);
-        friend bool operator== (const LargeNumber &lhs, const LargeNumber &rhs);
-        friend bool operator!= (const LargeNumber &lhs, const LargeNumber &rhs);
-
-        friend std::ostream & operator<< (std::ostream &os, const LargeNumber &num);
     };
 
+    LargeNumber operator+ (const LargeNumber &lhs, const LargeNumber &rhs);
+    LargeNumber operator- (const LargeNumber &lhs, const LargeNumber &rhs);
+    LargeNumber operator* (const LargeNumber &lhs, const LargeNumber &rhs);
+    LargeNumber operator/ (const LargeNumber &lhs, const LargeNumber &rhs);
+
+    bool operator> (const LargeNumber &lhs, const LargeNumber &rhs);
+    bool operator< (const LargeNumber &lhs, const LargeNumber &rhs);
+    bool operator>= (const LargeNumber &lhs, const LargeNumber &rhs);
+    bool operator<= (const LargeNumber &lhs, const LargeNumber &rhs);
+    bool operator== (const LargeNumber &lhs, const LargeNumber &rhs);
+    bool operator!= (const LargeNumber &lhs, const LargeNumber &rhs);
+
+    std::ostream & operator<< (std::ostream &os, const LargeNumber &num);
 }
 
 #endif
