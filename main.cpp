@@ -1,10 +1,11 @@
 #include <iostream>
-#include "large_number.hpp"
+#include <cassert>
+#include "large/number.hpp"
 
 int main(int argc, char *argv[])
 {
-    Large::LargeNumber x = -25;
-    Large::LargeNumber y = -10;
+    Large::Number x = -25;
+    Large::Number y = -10;
 
     std::cout << "x = " << x << "\ny = " << y << "\n" << std::endl;
 
