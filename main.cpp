@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cassert>
 #include "large/number.hpp"
 
 int main(int argc, char *argv[])
