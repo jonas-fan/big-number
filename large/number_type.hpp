@@ -24,26 +24,29 @@ public:
 	NumberType(const std::string &str);
 	~NumberType();
 
-	bool positive() const;
-	void positive(const bool &sign);
-
 	unsigned int size() const;
 	std::string string() const;
+
 	int compare(const NumberType &rhs) const;
 
-	int at(unsigned int index) const;
-	void at(unsigned int index, int num);
-
+	bool positive() const;
+	void positive(const bool &sign);
+	int at(const unsigned int &index) const;
+	void at(const unsigned int &index, const int &num);
 	void pop();
-	void push(int num);
+	void push(const int &num);
 
 private:
-	void initializer_(const std::string &str);
+	void init(const std::string &str);
 
 private:
 	std::vector<char> data_;
 	bool positive_;
 };
+
+
+int c2I(const char &c);
+char i2C(const int &i);
 
 } // namespace Large
 

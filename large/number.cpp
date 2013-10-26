@@ -31,22 +31,12 @@ Large::Number::~Number()
 
 }
 
-unsigned int Large::Number::size() const
-{
-	return this->num_.size();
-}
-
-std::string Large::Number::string() const
-{
-	return this->num_.string();
-}
-
 int Large::Number::compare(const Large::Number &rhs) const
 {
 	return this->num_.compare(rhs.num_);
 }
 
-Large::Number & Large::Number::add(const Large::Number &rhs)
+void Large::Number::add(const Large::Number &rhs)
 {
 	Large::Number x(*this);
 	Large::Number y(rhs);
@@ -87,11 +77,9 @@ Large::Number & Large::Number::add(const Large::Number &rhs)
 	result.num_.positive(positive);
 
 	this->num_ = result.num_;
-
-	return *this;
 }
 
-Large::Number & Large::Number::sub(const Large::Number &rhs)
+void Large::Number::sub(const Large::Number &rhs)
 {
 	Large::Number x(*this);
 	Large::Number y(rhs);
@@ -133,11 +121,9 @@ Large::Number & Large::Number::sub(const Large::Number &rhs)
 	result.num_.positive(positive);
 
 	this->num_ = result.num_;
-
-	return *this;
 }
 
-Large::Number & Large::Number::mul(const Large::Number &rhs)
+void Large::Number::mul(const Large::Number &rhs)
 {
 	Large::Number x(*this);
 	Large::Number y(rhs);
@@ -155,11 +141,9 @@ Large::Number & Large::Number::mul(const Large::Number &rhs)
 	result.num_.positive(positive);
 
 	this->num_ = result.num_;
-
-	return *this;
 }
 
-Large::Number & Large::Number::div(const Large::Number &rhs)
+void Large::Number::div(const Large::Number &rhs)
 {
 	Large::Number x(*this);
 	Large::Number y(rhs);
@@ -169,7 +153,7 @@ Large::Number & Large::Number::div(const Large::Number &rhs)
 	x.num_.positive(true);
 	y.num_.positive(true);
 
-	Large::Number result = Large::Math::div(x, y);
+	Large::Number result(Large::Math::div(x, y));
 
 	if (result == 0)
 		positive = true;
@@ -177,32 +161,34 @@ Large::Number & Large::Number::div(const Large::Number &rhs)
 	result.num_.positive(positive);
 
 	this->num_ = result.num_;
-
-	return *this;
 }
 
 Large::Number operator + (const Large::Number &lhs, const Large::Number &rhs)
 {
 	Large::Number retval(lhs);
-	return retval.add(rhs);
+	retval.add(rhs);
+	return retval;
 }
 
 Large::Number operator - (const Large::Number &lhs, const Large::Number &rhs)
 {
 	Large::Number retval(lhs);
-	return retval.sub(rhs);
+	retval.sub(rhs);
+	return retval;
 }
 
 Large::Number operator * (const Large::Number &lhs, const Large::Number &rhs)
 {
 	Large::Number retval(lhs);
-	return retval.mul(rhs);
+	retval.mul(rhs);
+	return retval;
 }
 
 Large::Number operator / (const Large::Number &lhs, const Large::Number &rhs)
 {
 	Large::Number retval(lhs);
-	return retval.div(rhs);
+	retval.div(rhs);
+	return retval;
 }
 
 bool operator > (const Large::Number &lhs, const Large::Number &rhs)

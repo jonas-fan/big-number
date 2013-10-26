@@ -23,23 +23,26 @@ public:
 	Number(const int &n);
 	Number(const char *str);
 	Number(const std::string &str);
-	Number(const NumberType &num);
+	Number(const Large::NumberType &num);
 	~Number();
 
 	unsigned int size() const;
 	std::string string() const;
-	int compare(const Number &rhs) const;
 
-	Number & add(const Number &rhs);
-	Number & sub(const Number &rhs);
-	Number & mul(const Number &rhs);
-	Number & div(const Number &rhs);
+	int compare(const Large::Number &rhs) const;
+
+	void add(const Large::Number &rhs);
+	void sub(const Large::Number &rhs);
+	void mul(const Large::Number &rhs);
+	void div(const Large::Number &rhs);
 
 private:
 	NumberType num_;
 };
 
 } // namespace Large
+
+#include "number.inl"
 
 Large::Number operator + (const Large::Number &lhs, const Large::Number &rhs);
 Large::Number operator - (const Large::Number &lhs, const Large::Number &rhs);

@@ -99,8 +99,8 @@ Large::Number Large::Math::div(const Large::Number &lhs, const Large::Number &rh
 			if (product > x)
 				continue;
 
-			x = x - product;
-			retval = retval + buff;
+			x.sub(product);
+			retval.add(buff);
 		}
 	}
 
