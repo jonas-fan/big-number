@@ -1,7 +1,7 @@
 #ifndef LARGE_NUMBER_HPP_
 #define LARGE_NUMBER_HPP_
 
-#include "number_type.hpp"
+#include <number_type.hpp>
 
 namespace Large
 {
@@ -16,33 +16,33 @@ namespace Large
  */
 class Number
 {
-	friend class Math;
+    friend class Math;
 
 public:
-	Number();
-	Number(const int &n);
-	Number(const char *str);
-	Number(const std::string &str);
-	Number(const Large::NumberType &num);
-	~Number();
+    Number();
+    Number(const int &n);
+    Number(const char *str);
+    Number(const std::string &str);
+    Number(const Large::NumberType &num);
+    ~Number();
 
-	unsigned int size() const;
-	std::string string() const;
+    unsigned int size() const;
+    std::string string() const;
 
-	int compare(const Large::Number &rhs) const;
+    int compare(const Large::Number &rhs) const;
 
-	void add(const Large::Number &rhs);
-	void sub(const Large::Number &rhs);
-	void mul(const Large::Number &rhs);
-	void div(const Large::Number &rhs);
+    void add(const Large::Number &rhs);
+    void sub(const Large::Number &rhs);
+    void mul(const Large::Number &rhs);
+    void div(const Large::Number &rhs);
 
 private:
-	NumberType num_;
+    NumberType num_;
 };
 
 } // namespace Large
 
-#include "number.inl"
+#include <number.inl>
 
 Large::Number operator + (const Large::Number &lhs, const Large::Number &rhs);
 Large::Number operator - (const Large::Number &lhs, const Large::Number &rhs);
@@ -58,4 +58,4 @@ bool operator != (const Large::Number &lhs, const Large::Number &rhs);
 
 std::ostream & operator << (std::ostream &os, const Large::Number &num);
 
-#endif
+#endif  // LARGE_NUMBER_HPP_
