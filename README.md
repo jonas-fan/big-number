@@ -1,17 +1,12 @@
-## Introduction
+# Big Number
 
-The large-number implementation.
+Implement big number in C
 
-Example:
-
-```
-Large::Number x("78962132612316613153153153545245221898");  // 78962132612316613153153153545245221898
-Large::Number y("8130489254242425424299998978256");         // 8130489254242425424299998978256
-
-x + y;  // 78962140742805867395578577845244200154
-x - y;  // 78962124481827358910727729245246243642
-x * y;  // 642000770696505599789560412786335169728798016702854585388365997049888
-x / y;  // 9711854
-
-....
+## Build
+```bash
+$ git clone https://github.com/yjfan/big-number.git
+$ cd big-number/build
+$ cmake ..
+$ make
+$ ./test/test
 ```
