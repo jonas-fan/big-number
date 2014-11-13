@@ -34,6 +34,16 @@ BigNumber::Number::~Number()
 
 }
 
+unsigned int BigNumber::Number::size() const
+{
+    return this->num_.size();
+}
+
+std::string BigNumber::Number::string() const
+{
+    return this->num_.string();
+}
+
 int BigNumber::Number::compare(const BigNumber::Number &rhs) const
 {
     return this->num_.compare(rhs.num_);

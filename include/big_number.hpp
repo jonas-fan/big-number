@@ -7,7 +7,7 @@ namespace BigNumber
 {
 
 /**
- *    The big number.
+ *    Big number
  *
  *
  *    @version 0.1.2
@@ -41,8 +41,6 @@ private:
 };
 
 } // namespace BigNumber
-
-#include <big_number.inl>
 
 BigNumber::Number operator + (const BigNumber::Number &lhs, const BigNumber::Number &rhs);
 BigNumber::Number operator - (const BigNumber::Number &lhs, const BigNumber::Number &rhs);

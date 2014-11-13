@@ -8,107 +8,134 @@
 
 BigNumber::Number BigNumber::Math::add(const BigNumber::Number &lhs, const BigNumber::Number &rhs)
 {
-    BigNumber::Integer retval;
+    BigNumber::Integer result;
+
     const BigNumber::Integer &x = lhs.num_;
     const BigNumber::Integer &y = rhs.num_;
 
     const unsigned int length = (lhs > rhs)?  lhs.size() : rhs.size();
+
     unsigned int carry = 0;
 
     for (unsigned int index = 0; index < length; ++index) {
-        int val = x.at(index) + y.at(index) + carry;
-        carry = val / 10;
-        retval.push(val % 10);
+        const int value = x.at(index) + y.at(index) + carry;
+
+        carry = value / 10;
+
+        result.push(value % 10);
     }
 
-    if (carry)
-        retval.push(carry);
+    if (carry) {
+        result.push(carry);
+    }
 
-    return retval;
+    return result;
 }
 
 BigNumber::Number BigNumber::Math::sub(const BigNumber::Number &lhs, const BigNumber::Number &rhs)
 {
-    BigNumber::Integer retval;
+    BigNumber::Integer result;
+
     const BigNumber::Integer &x = lhs.num_;
     const BigNumber::Integer &y = rhs.num_;
 
     const unsigned int length = x.size();
+
     unsigned int index;
-    bool carry = false;
+
+    bool borrow = false;
 
     for (index = 0; index < length; ++index) {
-        int val = x.at(index) - y.at(index) - carry;
-        carry = (val < 0);
-        retval.push((val + 10) % 10);
+        const int value = x.at(index) - y.at(index) - borrow;
+
+        borrow = (value < 0);
+
+        result.push((value + 10) % 10);
     }
 
     index = length - 1;
 
-    while (index && retval.at(index--) == 0)
-        retval.pop();
+    while (index &&
+           result.at(index--) == 0)
+    {
+        result.pop();
+    }
 
-    return retval;
+    return result;
 }
 
 BigNumber::Number BigNumber::Math::mul(const BigNumber::Number &lhs, const BigNumber::Number &rhs)
 {
-    BigNumber::Integer retval;
+    BigNumber::Integer result;
+
     const BigNumber::Integer &x = lhs.num_;
     const BigNumber::Integer &y = rhs.num_;
 
     for (unsigned int xIndex = 0; xIndex < x.size(); ++xIndex) {
-        int carry = 0;
+        unsigned int carry = 0;
 
         for (unsigned int yIndex = 0; yIndex < y.size(); ++yIndex) {
-            int val = x.at(xIndex) * y.at(yIndex) + carry + retval.at(xIndex + yIndex);
+            const unsigned int value = x.at(xIndex) * y.at(yIndex) +
+                                       carry +
+                                       result.at(xIndex + yIndex);
 
-            carry = val / 10;
-            val %= 10;
+            carry = value / 10;
 
-            if (xIndex + yIndex < retval.size())
-                retval.at(xIndex + yIndex, val);
-            else
-                retval.push(val);
+            if (xIndex + yIndex < result.size()) {
+                result.at(xIndex + yIndex, value % 10);
+            }
+            else {
+                result.push(value % 10);
+            }
         }
 
-        if (carry)
-            retval.push(carry);
+        if (carry) {
+            result.push(carry);
+        }
     }
 
-    unsigned int index = retval.size() - 1;
+    unsigned int index = result.size() - 1;
 
-    while (index && retval.at(index--) == 0)
-        retval.pop();
+    while (index &&
+           result.at(index--) == 0)
+    {
+        result.pop();
+    }
 
-    return retval;
+    return result;
 }
 
 BigNumber::Number BigNumber::Math::div(const BigNumber::Number &lhs, const BigNumber::Number &rhs)
 {
-    BigNumber::Number retval;
+    BigNumber::Number result;
     BigNumber::Number x(lhs);
     BigNumber::Number y(rhs);
 
-    if (y == 0)
-        return retval;
+    if (y == 0) {
+        return result;
+    }
 
-    for (int index = x.size() - y.size() + 1; index > 0 && x > 0; --index) {
+    for (int index = x.size() - y.size() + 1;
+         index > 0 && x > 0;
+         --index)
+    {
         std::string initializer(index, '0');
 
-        for (int number = 9; number > 0; --number) {
-            initializer.at(0) = BigNumber::i2C(number);
+        for (unsigned int number = 9; number > 0; --number) {
+            initializer.at(0) = BigNumber::integer2char(number);
 
             BigNumber::Number buff(initializer);
             BigNumber::Number product(y * buff);
 
-            if (product > x)
+            if (product > x) {
                 continue;
+            }
 
             x.sub(product);
-            retval.add(buff);
+
+            result.add(buff);
         }
     }
 
-    return retval;
+    return result;
 }

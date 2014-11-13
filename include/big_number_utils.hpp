@@ -13,8 +13,8 @@ namespace BigNumber
  *    @author  Jian <jianfan.tw@gmail.com>
  */
 
-int c2I(const char &c);
-char i2C(const int &i);
+int char2integer(char charactor);
+char integer2char(int integer);
 
 } // namespace BigNumber
 

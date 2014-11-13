@@ -20,7 +20,7 @@ class Integer
 {
 public:
     Integer();
-    Integer(const long long int &number);
+    Integer(long long int integer);
     Integer(const std::string &string);
     virtual ~Integer();
 
@@ -30,16 +30,16 @@ public:
     int compare(const Integer &rhs) const;
 
     bool positive() const;
-    void positive(const bool &sign);
+    void positive(bool sign);
 
-    int at(const unsigned int &index) const;
-    void at(const unsigned int &index, const int &num);
+    int at(unsigned int index) const;
+    void at(unsigned int index, int value);
 
     void pop();
-    void push(const int &num);
+    void push(int value);
 
 private:
-    void init(const std::string &str);
+    void init(const std::string &string);
 
 private:
     std::vector<char> data_;

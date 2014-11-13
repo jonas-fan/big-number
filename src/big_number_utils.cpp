@@ -5,12 +5,12 @@
  *    Public methods
  */
 
-int BigNumber::c2I(const char &c)
+int BigNumber::char2integer(char charactor)
 {
-    return c - '0';
+    return charactor - '0';
 }
 
-char BigNumber::i2C(const int &i)
+char BigNumber::integer2char(int integer)
 {
-    return i + '0';
+    return integer + '0';
 }

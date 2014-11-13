@@ -1,6 +1,7 @@
 # Big Number
+[![Build Status](https://travis-ci.org/yjfan/big-number.svg)](https://travis-ci.org/yjfan/big-number)
 
-Implement big number in C
+Implement big number in C++
 
 ## Build
 ```bash
