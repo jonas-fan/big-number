@@ -1,26 +1,9 @@
-# Big Number
-[![Build Status](https://travis-ci.org/yjfan/big-number.svg)](https://travis-ci.org/yjfan/big-number)
+# bigint
+[![Build Status](https://travis-ci.org/jonas-fan/bigint.svg)](https://travis-ci.org/jonas-fan/bigint)
 
-Implement big number in C++
+An implementation of big integer in C++
 
-## Build
-```bash
-$ git clone https://github.com/yjfan/big-number.git
-$ cd big-number/build
-$ cmake ..
-$ make
-$ ./test/test
-```
-
-## Example
+## Usage
 ```cpp
-BigNumber::Number x("78962132878965235699846513216889615615631868464612316613153153153521898");
-BigNumber::Number y("813048956");
-
-std::cout << "x = " << x << "\ny = " << y << "\n" << std::endl;
-
-std::cout << "x + y = " << x + y << std::endl;
-std::cout << "x - y = " << x - y << std::endl;
-std::cout << "x * y = " << x * y << std::endl;
-std::cout << "x / y = " << x / y << std::endl;
+BigInt num("12345678901234567890");
 ```
