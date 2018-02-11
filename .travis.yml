@@ -10,7 +10,7 @@ before_script:
 script: make -j4
 
 after_script:
-    - ./tests/test_big_number
+    - ./tests/test_bigint
 
 notifications:
     email:
