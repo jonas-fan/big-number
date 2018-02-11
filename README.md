@@ -1,11 +1,11 @@
 # Big Number
-[![Build Status](https://travis-ci.org/yjfan/big-number.svg)](https://travis-ci.org/yjfan/big-number)
+[![Build Status](https://travis-ci.org/jonas-fan/big-number.svg)](https://travis-ci.org/jonas-fan/big-number)
 
-Implement big number in C++
+Big number implementation in C++
 
 ## Build
 ```bash
-$ git clone https://github.com/yjfan/big-number.git
+$ git clone https://github.com/jonas-fan/big-number.git
 $ cd big-number/build
 $ cmake ..
 $ make
