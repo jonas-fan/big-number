@@ -1,7 +1,9 @@
 # bigint
 [![Build Status](https://travis-ci.org/jonas-fan/bigint.svg)](https://travis-ci.org/jonas-fan/bigint)
 
-An implementation of big integer in C++
+(This project is not done yet)
+
+An implementation of big integer in C++.
 
 ## Usage
 ```cpp
