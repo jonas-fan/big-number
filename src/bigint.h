@@ -8,7 +8,7 @@ class BigInt
 {
 public:
     BigInt();
-    BigInt(int value);
+    BigInt(long long int value);
     BigInt(const std::string &value);
     virtual ~BigInt();
 

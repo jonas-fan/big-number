@@ -6,20 +6,21 @@ static inline bool isValidInt(const std::string &value)
         return false;
     }
 
-    if ((value.size() == 1) && !isdigit(value[0])) {
+    std::string::const_iterator iter = value.begin();
+
+    if ((*iter == '+') || (*iter == '-')) {
+        ++iter;
+    }
+    else if (!isdigit(*iter)) {
         return false;
     }
 
-    std::size_t index = 0;
-
-    if ((value[0] == '+') || (value[0] == '-')) {
-        ++index;
-    }
-
-    for (; index != value.size(); ++index) {
-        if (!isdigit(value[index])) {
+    while (iter != value.end()) {
+        if (!isdigit(*iter)) {
             return false;
         }
+
+        ++iter;
     }
 
     return true;
@@ -31,27 +32,17 @@ BigInt::BigInt()
 
 }
 
-BigInt::BigInt(int value)
-    : positive_(true), data_()
+BigInt::BigInt(long long int value)
+    : BigInt(std::to_string(value))
 {
-    const std::string &str = std::to_string(value);
 
-    if (isValidInt(str)) {
-        this->assign(str);
-    }
-    else {
-        this->assign("0");
-    }
 }
 
 BigInt::BigInt(const std::string &value)
-    : positive_(true), data_()
+    : positive_(true), data_({0})
 {
     if (isValidInt(value)) {
         this->assign(value);
-    }
-    else {
-        this->assign("0");
     }
 }
 
@@ -65,17 +56,12 @@ void BigInt::assign(const std::string &value)
     std::string::const_reverse_iterator begin = value.rbegin();
     std::string::const_reverse_iterator end = value.rend();
 
-    this->positive_ = true;
-
-    if (*(end - 1) == '+') {
-        --end;
-    }
-    else if (*(end - 1) == '-') {
-        this->positive_ = false;
-        --end;
-    }
-
     this->data_.clear();
+    this->positive_ = (value.front() != '-');
+
+    if ((value.front() == '+') || (value.front() == '-')) {
+        --end;
+    }
 
     while (begin != end) {
         this->data_.push_back(*begin - '0');
