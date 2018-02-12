@@ -69,6 +69,221 @@ void BigInt::assign(const std::string &value)
     }
 }
 
+void BigInt::trim()
+{
+    if (this->data_.empty()) {
+        return;
+    }
+
+    std::size_t index = this->data_.size() - 1;
+
+    while (index && (this->data_[index] == 0)) {
+        this->data_.pop_back();
+        --index;
+    }
+}
+
+BigInt BigInt::operator + (const BigInt &rhs) const
+{
+    BigInt retval(*this);
+
+    retval.add(rhs);
+
+    return retval;
+}
+
+BigInt BigInt::operator - (const BigInt &rhs) const
+{
+    BigInt retval(*this);
+
+    retval.sub(rhs);
+
+    return retval;
+}
+
+BigInt BigInt::operator * (const BigInt &rhs) const
+{
+    const BigInt &lhs = *this;
+    const auto &ldata = lhs.data_;
+    const auto &rdata = rhs.data_;
+    BigInt result;
+    auto &output = result.data_;
+
+    result.positive_ = !(lhs.positive_ ^ rhs.positive_);
+    output.clear();
+    output.resize(ldata.size() + rdata.size(), 0);
+
+    for (std::size_t lindex = 0; lindex != ldata.size(); ++lindex) {
+        unsigned int carry = 0;
+
+        for (std::size_t rindex = 0; rindex != rdata.size(); ++rindex) {
+            const std::size_t offset = lindex + rindex;
+            const int value = ldata[lindex] * rdata[rindex] + carry + output[offset];
+
+            carry = value / 10;
+
+            output[offset] = value % 10;
+        }
+
+        output[lindex + rdata.size()] = carry;
+    }
+
+    result.trim();
+
+    return result;
+}
+
+BigInt BigInt::operator / (const BigInt &rhs) const
+{
+    BigInt retval(*this);
+
+    retval /= rhs;
+
+    return retval;
+}
+
+BigInt & BigInt::operator *= (const BigInt &rhs)
+{
+    (*this) = (*this) * rhs;
+
+    return (*this);
+}
+
+BigInt & BigInt::operator /= (const BigInt &rhs)
+{
+    BigInt x(*this);
+    BigInt y(rhs);
+    BigInt &result = (*this);
+
+    result.assign("0");
+
+    if (y == 0) {
+        return result;
+    }
+
+    const bool positive = !(x.positive_ ^ y.positive_);
+    x.positive_ = true;
+    y.positive_ = true;
+
+    for (int index = x.data_.size() - y.data_.size() + 1;
+         (index > 0) && (x > 0);
+         --index)
+    {
+        std::string initializer(index, '0');
+
+        for (unsigned int number = 9; number > 0; --number) {
+            initializer[0] = number + '0';
+
+            BigInt buff(initializer);
+            BigInt product(y * buff);
+
+            if (product > x) {
+                continue;
+            }
+
+            x.sub(product);
+
+            result.add(buff);
+        }
+    }
+
+    result.positive_ = positive;
+
+    return result;
+}
+
+bool BigInt::operator > (const BigInt &rhs) const
+{
+    return (this->compare(rhs) > 0);
+}
+
+bool BigInt::operator >= (const BigInt &rhs) const
+{
+    return (this->compare(rhs) >= 0);
+}
+
+bool BigInt::operator < (const BigInt &rhs) const
+{
+    return (this->compare(rhs) < 0);
+}
+
+bool BigInt::operator <= (const BigInt &rhs) const
+{
+    return (this->compare(rhs) <= 0);
+}
+
+bool BigInt::operator == (const BigInt &rhs) const
+{
+    return (this->compare(rhs) == 0);
+}
+
+bool BigInt::operator != (const BigInt &rhs) const
+{
+    return (this->compare(rhs) != 0);
+}
+
+int BigInt::compare(const BigInt &rhs) const
+{
+    const BigInt &lhs = *this;
+    const auto *ldata = &(this->data_);
+    const auto *rdata = &(rhs.data_);
+
+    if (lhs.positive_ && !rhs.positive_) {
+        return 1;
+    }
+
+    if (!lhs.positive_ && rhs.positive_) {
+        return -1;
+    }
+
+    if (!lhs.positive_ && !rhs.positive_) {
+        std::swap(ldata, rdata);
+    }
+
+    if (ldata->size() > rdata->size()) {
+        return 1;
+    }
+
+    if (ldata->size() < rdata->size()) {
+        return -1;
+    }
+
+    auto liter = ldata->rbegin();
+    auto riter = rdata->rbegin();
+
+    while ((liter != ldata->rend() && (riter != rdata->rend()))) {
+        const int result = *liter - *riter;
+
+        if (result) {
+            return result;
+        }
+
+        ++liter;
+        ++riter;
+    }
+
+    return 0;
+}
+
+std::string BigInt::string() const
+{
+    std::string retval;
+
+    for (auto iter = this->data_.rbegin(); iter != this->data_.rend(); ++iter) {
+        retval.push_back(*iter + '0');
+    }
+
+    if ((retval.size() == 1) && (retval[0] == '0')) {
+        return retval;
+    }
+
+    if (this->positive_) {
+        return retval;
+    }
+
+    return ("-" + retval);
+}
+
 void BigInt::add(const BigInt &rhs)
 {
     BigInt result;
@@ -214,254 +429,4 @@ BigInt BigInt::sub_(const BigInt &rhs)
     }
 
     return result;
-}
-
-void BigInt::mul(const BigInt &rhs)
-{
-    BigInt x(*this);
-    BigInt y(rhs);
-
-    bool positive = !(x.positive_ ^ y.positive_);
-
-    x.positive_ = true;
-    y.positive_ = true;
-
-    BigInt result = x.mul_(y);
-
-    if (result == 0) {
-        positive = true;
-    }
-
-    this->data_ = result.data_;
-    this->positive_ = positive;
-}
-
-BigInt BigInt::mul_(const BigInt &rhs)
-{
-    BigInt result;
-    auto *odata = &result.data_;
-    const auto *ldata = &(this->data_);
-    const auto *rdata = &(rhs.data_);
-
-    odata->clear();
-
-    for (std::size_t xIndex = 0; xIndex != ldata->size(); ++xIndex) {
-        unsigned int carry = 0;
-
-        for (std::size_t yIndex = 0; yIndex != rdata->size(); ++yIndex) {
-            const int lvalue = (xIndex < ldata->size()) ? ldata->at(xIndex) : 0;
-            const int rvalue = (yIndex < rdata->size()) ? rdata->at(yIndex) : 0;
-            const int ovalue = (xIndex + yIndex < odata->size()) ? odata->at(xIndex + yIndex) : 0;
-            const int value = lvalue * rvalue + carry + ovalue;
-
-            carry = value / 10;
-
-            if (xIndex + yIndex < odata->size()) {
-                odata->at(xIndex + yIndex) = value % 10;
-            }
-            else {
-                odata->push_back(value % 10);
-            }
-        }
-
-        if (carry) {
-            odata->push_back(carry);
-        }
-    }
-
-    std::size_t index = odata->size() - 1;
-
-    while (index && (odata->at(index--) == 0)) {
-        odata->pop_back();
-    }
-
-    return result;
-}
-
-void BigInt::div(const BigInt &rhs)
-{
-    BigInt x(*this);
-    BigInt y(rhs);
-
-    bool positive = !(x.positive_ ^ y.positive_);
-
-    x.positive_ = true;
-    y.positive_ = true;
-
-    BigInt result = x.div_(y);
-
-    if (result == 0) {
-        positive = true;
-    }
-
-    this->data_ = result.data_;
-    this->positive_ = positive;
-}
-
-BigInt BigInt::div_(const BigInt &rhs)
-{
-    BigInt result;
-    BigInt x(*this);
-    BigInt y(rhs);
-
-    if (y == 0) {
-        return result;
-    }
-
-    for (int index = x.data_.size() - y.data_.size() + 1;
-         index > 0 && x > 0;
-         --index)
-    {
-        std::string initializer(index, '0');
-
-        for (unsigned int number = 9; number > 0; --number) {
-            initializer[0] = number + '0';
-
-            BigInt buff(initializer);
-            BigInt product(y * buff);
-
-            if (product > x) {
-                continue;
-            }
-
-            x.sub(product);
-
-            result.add(buff);
-        }
-    }
-
-    return result;
-}
-
-int BigInt::compare(const BigInt &rhs) const
-{
-    const BigInt &lhs = *this;
-    const auto *ldata = &(this->data_);
-    const auto *rdata = &(rhs.data_);
-
-    if (lhs.positive_ && !rhs.positive_) {
-        return 1;
-    }
-
-    if (!lhs.positive_ && rhs.positive_) {
-        return -1;
-    }
-
-    if (!lhs.positive_ && !rhs.positive_) {
-        std::swap(ldata, rdata);
-    }
-
-    if (ldata->size() > rdata->size()) {
-        return 1;
-    }
-
-    if (ldata->size() < rdata->size()) {
-        return -1;
-    }
-
-    auto liter = ldata->rbegin();
-    auto riter = rdata->rbegin();
-
-    while ((liter != ldata->rend() && (riter != rdata->rend()))) {
-        const int result = *liter - *riter;
-
-        if (result) {
-            return result;
-        }
-
-        ++liter;
-        ++riter;
-    }
-
-    return 0;
-}
-
-std::string BigInt::string() const
-{
-    std::string retval;
-
-    for (auto iter = this->data_.rbegin(); iter != this->data_.rend(); ++iter) {
-        retval.push_back(*iter + '0');
-    }
-
-    if ((retval.size() == 1) && (retval[0] == '0')) {
-        return retval;
-    }
-
-    if (this->positive_) {
-        return retval;
-    }
-
-    return ("-" + retval);
-}
-
-BigInt operator + (const BigInt &lhs, const BigInt &rhs)
-{
-    BigInt retval(lhs);
-
-    retval.add(rhs);
-
-    return retval;
-}
-
-BigInt operator - (const BigInt &lhs, const BigInt &rhs)
-{
-    BigInt retval(lhs);
-
-    retval.sub(rhs);
-
-    return retval;
-}
-
-BigInt operator * (const BigInt &lhs, const BigInt &rhs)
-{
-    BigInt retval(lhs);
-
-    retval.mul(rhs);
-
-    return retval;
-}
-
-BigInt operator / (const BigInt &lhs, const BigInt &rhs)
-{
-    BigInt retval(lhs);
-
-    retval.div(rhs);
-
-    return retval;
-}
-
-bool operator > (const BigInt &lhs, const BigInt &rhs)
-{
-    return (lhs.compare(rhs) > 0);
-}
-
-bool operator >= (const BigInt &lhs, const BigInt &rhs)
-{
-    return (lhs.compare(rhs) >= 0);
-}
-
-bool operator < (const BigInt &lhs, const BigInt &rhs)
-{
-    return (lhs.compare(rhs) < 0);
-}
-
-bool operator <= (const BigInt &lhs, const BigInt &rhs)
-{
-    return (lhs.compare(rhs) <= 0);
-}
-
-bool operator == (const BigInt &lhs, const BigInt &rhs)
-{
-    return (lhs.compare(rhs) == 0);
-}
-
-bool operator != (const BigInt &lhs, const BigInt &rhs)
-{
-    return (lhs.compare(rhs) != 0);
-}
-
-std::ostream & operator << (std::ostream &os, const BigInt &bigint)
-{
-    return os << bigint.string();
 }
