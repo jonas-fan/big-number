@@ -17,9 +17,13 @@ public:
     BigInt operator - (const BigInt &rhs) const;
     BigInt operator * (const BigInt &rhs) const;
     BigInt operator / (const BigInt &rhs) const;
+    BigInt & operator += (const BigInt &rhs);
+    BigInt & operator -= (const BigInt &rhs);
     BigInt & operator *= (const BigInt &rhs);
     BigInt & operator /= (const BigInt &rhs);
 
+    // comparers
+    int compare(const BigInt &rhs) const;
     bool operator > (const BigInt &rhs) const;
     bool operator >= (const BigInt &rhs) const;
     bool operator < (const BigInt &rhs) const;
@@ -27,18 +31,13 @@ public:
     bool operator == (const BigInt &rhs) const;
     bool operator != (const BigInt &rhs) const;
 
-    int compare(const BigInt &rhs) const;
+    // helpers
+    BigInt abs() const;
     std::string string() const;
 
 private:
     void assign(const std::string &value);
     void trim();
-
-    void add(const BigInt &rhs);
-    void sub(const BigInt &rhs);
-
-    BigInt add_(const BigInt &rhs);
-    BigInt sub_(const BigInt &rhs);
 
 private:
     bool positive_;

@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
     num3 = num1 + num2;
     assert(num3.string() == "1111111111111111110");
 
-    num3 = num1 - num2;
-    assert(num3.string() == "-864197532864197532");
+    num3 = num2 - num1;
+    assert(num3.string() == "864197532864197532");
 
     num3 = num1 * num2;
     assert(num3.string() == "121932631356500531347203169112635269");
