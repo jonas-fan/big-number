@@ -31,7 +31,7 @@ public:
     bool operator == (const BigInt &rhs) const;
     bool operator != (const BigInt &rhs) const;
 
-    // helpers
+    // others
     BigInt abs() const;
     std::string string() const;
 

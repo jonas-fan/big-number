@@ -1,14 +1,17 @@
 # bigint
 [![Build Status](https://travis-ci.org/jonas-fan/bigint.svg)](https://travis-ci.org/jonas-fan/bigint)
 
-(This project is not done yet)
-
 An implementation of big integer in C++.
+
+## Supported Operations
+
+- `+`, `-`, `*`, `/`
+- `+=`, `-=`, `*=`, `/=`
 
 ## Usage
 ```cpp
 BigInt num1("123456789123456789");
-BigInt num2("987654321987654321");
+BigInt num2("987654321987654321123456789123456789");
 BigInt num3;
 
 // 1111111111111111110

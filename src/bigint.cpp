@@ -85,8 +85,15 @@ void BigInt::trim()
 
 BigInt BigInt::operator + (const BigInt &rhs) const
 {
-    // @TODO - sign should be considered
     const BigInt &lhs = (*this);
+
+    if (!rhs.positive_) {
+        return lhs - rhs.abs();
+    }
+    else if (!lhs.positive_) {
+        return rhs - lhs.abs();
+    }
+
     const auto &ldata = lhs.data_;
     const auto &rdata = rhs.data_;
     const std::size_t length = std::max(ldata.size(), rdata.size());
@@ -117,8 +124,24 @@ BigInt BigInt::operator + (const BigInt &rhs) const
 
 BigInt BigInt::operator - (const BigInt &rhs) const
 {
-    // @TODO - sign should be considered
     const BigInt &lhs = (*this);
+
+    if (!rhs.positive_) {
+        return lhs + rhs.abs();
+    }
+    else if (!lhs.positive_) {
+        BigInt result = lhs.abs() + rhs.abs();
+        result.positive_ = false;
+
+        return result;
+    }
+    else if (lhs < rhs) {
+        BigInt result = rhs - lhs;
+        result.positive_ = false;
+
+        return result;
+    }
+
     const auto &ldata = lhs.data_;
     const auto &rdata = rhs.data_;
     const std::size_t length = ldata.size();
