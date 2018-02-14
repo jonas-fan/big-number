@@ -12,7 +12,8 @@ static inline bool isNumber(const std::string &value)
     if ((*iter == '+') || (*iter == '-')) {
         ++iter;
     }
-    else if (!isdigit(*iter)) {
+
+    if ((iter == value.end()) || !isdigit(*iter)) {
         return false;
     }
 
