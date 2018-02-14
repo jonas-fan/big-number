@@ -13,10 +13,10 @@ public:
     virtual ~BigInt();
 
     // operations
-    BigInt operator + (const BigInt &rhs) const;
-    BigInt operator - (const BigInt &rhs) const;
-    BigInt operator * (const BigInt &rhs) const;
-    BigInt operator / (const BigInt &rhs) const;
+    BigInt   operator +  (const BigInt &rhs) const;
+    BigInt   operator -  (const BigInt &rhs) const;
+    BigInt   operator *  (const BigInt &rhs) const;
+    BigInt   operator /  (const BigInt &rhs) const;
     BigInt & operator += (const BigInt &rhs);
     BigInt & operator -= (const BigInt &rhs);
     BigInt & operator *= (const BigInt &rhs);
@@ -24,9 +24,9 @@ public:
 
     // comparers
     int compare(const BigInt &rhs) const;
-    bool operator > (const BigInt &rhs) const;
+    bool operator >  (const BigInt &rhs) const;
     bool operator >= (const BigInt &rhs) const;
-    bool operator < (const BigInt &rhs) const;
+    bool operator <  (const BigInt &rhs) const;
     bool operator <= (const BigInt &rhs) const;
     bool operator == (const BigInt &rhs) const;
     bool operator != (const BigInt &rhs) const;

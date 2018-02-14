@@ -3,12 +3,19 @@
 
 An implementation of big integer in C++.
 
-## Supported Operations
+## Supported functions
+
+### Operations
 
 - `+`, `-`, `*`, `/`
 - `+=`, `-=`, `*=`, `/=`
 
+### Comparisons
+
+- `>`, `>=`, `<`, `<=`, `==`, `!=`
+
 ## Usage
+
 ```cpp
 BigInt num1("123456789123456789");
 BigInt num2("987654321987654321123456789123456789");

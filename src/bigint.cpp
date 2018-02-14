@@ -1,6 +1,7 @@
 #include <bigint.h>
+#include <cctype>
 
-static inline bool isValidInt(const std::string &value)
+static inline bool isNumber(const std::string &value)
 {
     if (value.empty()) {
         return false;
@@ -41,7 +42,7 @@ BigInt::BigInt(long long int value)
 BigInt::BigInt(const std::string &value)
     : positive_(true), data_({0})
 {
-    if (isValidInt(value)) {
+    if (isNumber(value)) {
         this->assign(value);
     }
 }
@@ -106,8 +107,8 @@ BigInt BigInt::operator + (const BigInt &rhs) const
     unsigned int carry = 0;
 
     for (std::size_t index = 0; index < length; ++index) {
-        const int lvalue = (index < ldata.size()) ? ldata.at(index) : 0;
-        const int rvalue = (index < rdata.size()) ? rdata.at(index) : 0;
+        const int lvalue = (index < ldata.size()) ? ldata[index] : 0;
+        const int rvalue = (index < rdata.size()) ? rdata[index] : 0;
         const int value = lvalue + rvalue + carry;
 
         carry = value / 10;
@@ -149,13 +150,13 @@ BigInt BigInt::operator - (const BigInt &rhs) const
     auto &output = result.data_;
 
     output.clear();
-    output.resize(length + 1, 0);
+    output.resize(length, 0);
 
     unsigned int borrow = 0;
 
     for (std::size_t index = 0; index < length; ++index) {
-        const int lvalue = (index < ldata.size()) ? ldata.at(index) : 0;
-        const int rvalue = (index < rdata.size()) ? rdata.at(index) : 0;
+        const int lvalue = (index < ldata.size()) ? ldata[index] : 0;
+        const int rvalue = (index < rdata.size()) ? rdata[index] : 0;
         const int value = lvalue - rvalue - borrow;
 
         borrow = (value < 0);
@@ -176,7 +177,6 @@ BigInt BigInt::operator * (const BigInt &rhs) const
     BigInt result;
     auto &output = result.data_;
 
-    result.positive_ = !(lhs.positive_ ^ rhs.positive_);
     output.clear();
     output.resize(ldata.size() + rdata.size(), 0);
 
@@ -196,6 +196,7 @@ BigInt BigInt::operator * (const BigInt &rhs) const
     }
 
     result.trim();
+    result.positive_ = !(lhs.positive_ ^ rhs.positive_);
 
     return result;
 }
