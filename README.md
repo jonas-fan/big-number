@@ -5,14 +5,25 @@ An implementation of big integer in C++.
 
 ## Supported functions
 
-### Operations
+### Increment and Decrement
+
+- `++`, `--`
+
+### Arithmetic
 
 - `+`, `-`, `*`, `/`
+
+### Assignment
+
 - `+=`, `-=`, `*=`, `/=`
 
-### Comparisons
+### Comparison
 
 - `>`, `>=`, `<`, `<=`, `==`, `!=`
+
+### Others
+
+- `string()`, `abs()`
 
 ## Usage
 
