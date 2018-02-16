@@ -85,6 +85,38 @@ void BigInt::trim()
     }
 }
 
+BigInt & BigInt::operator ++ ()
+{
+    (*this) = (*this) + 1;
+
+    return (*this);
+}
+
+BigInt BigInt::operator ++ (int)
+{
+    BigInt retval(*this);
+
+    (*this) = (*this) + 1;
+
+    return retval;
+}
+
+BigInt & BigInt::operator -- ()
+{
+    (*this) = (*this) - 1;
+
+    return (*this);
+}
+
+BigInt BigInt::operator -- (int)
+{
+    BigInt retval(*this);
+
+    (*this) = (*this) - 1;
+
+    return retval;
+}
+
 BigInt BigInt::operator + (const BigInt &rhs) const
 {
     const BigInt &lhs = (*this);
@@ -96,29 +128,26 @@ BigInt BigInt::operator + (const BigInt &rhs) const
         return rhs - lhs.abs();
     }
 
-    const auto &ldata = lhs.data_;
-    const auto &rdata = rhs.data_;
-    const std::size_t length = std::max(ldata.size(), rdata.size());
-    BigInt result;
-    auto &output = result.data_;
+    const std::vector<int> *ldata = &(lhs.data_);
+    const std::vector<int> *rdata = &(rhs.data_);
+    const std::size_t length = std::max(ldata->size(), rdata->size());
 
-    output.clear();
-    output.resize(length + 1, 0);
+    BigInt result;
+    result.data_.resize(length + 1, 0);
 
     unsigned int carry = 0;
 
     for (std::size_t index = 0; index < length; ++index) {
-        const int lvalue = (index < ldata.size()) ? ldata[index] : 0;
-        const int rvalue = (index < rdata.size()) ? rdata[index] : 0;
+        const int lvalue = (index < ldata->size()) ? (*ldata)[index] : 0;
+        const int rvalue = (index < rdata->size()) ? (*rdata)[index] : 0;
         const int value = lvalue + rvalue + carry;
 
         carry = value / 10;
 
-        output[index] = value % 10;
+        result.data_[index] = value % 10;
     }
 
-    output[length] = carry;
-
+    result.data_[length] = carry;
     result.trim();
 
     return result;
@@ -137,32 +166,30 @@ BigInt BigInt::operator - (const BigInt &rhs) const
 
         return result;
     }
-    else if (lhs < rhs) {
-        BigInt result = rhs - lhs;
+
+    const std::vector<int> *ldata = &(lhs.data_);
+    const std::vector<int> *rdata = &(rhs.data_);
+    const std::size_t length = std::max(ldata->size(), rdata->size());
+
+    BigInt result;
+    result.data_.resize(length, 0);
+
+    if (lhs < rhs) {
         result.positive_ = false;
 
-        return result;
+        std::swap(ldata, rdata);
     }
-
-    const auto &ldata = lhs.data_;
-    const auto &rdata = rhs.data_;
-    const std::size_t length = ldata.size();
-    BigInt result;
-    auto &output = result.data_;
-
-    output.clear();
-    output.resize(length, 0);
 
     unsigned int borrow = 0;
 
     for (std::size_t index = 0; index < length; ++index) {
-        const int lvalue = (index < ldata.size()) ? ldata[index] : 0;
-        const int rvalue = (index < rdata.size()) ? rdata[index] : 0;
+        const int lvalue = (index < ldata->size()) ? (*ldata)[index] : 0;
+        const int rvalue = (index < rdata->size()) ? (*rdata)[index] : 0;
         const int value = lvalue - rvalue - borrow;
 
         borrow = (value < 0);
 
-        output[index] = (value + 10) % 10;
+        result.data_[index] = (value + 10) % 10;
     }
 
     result.trim();
@@ -173,31 +200,29 @@ BigInt BigInt::operator - (const BigInt &rhs) const
 BigInt BigInt::operator * (const BigInt &rhs) const
 {
     const BigInt &lhs = (*this);
-    const auto &ldata = lhs.data_;
-    const auto &rdata = rhs.data_;
+    const std::vector<int> *ldata = &(lhs.data_);
+    const std::vector<int> *rdata = &(rhs.data_);
+
     BigInt result;
-    auto &output = result.data_;
+    result.data_.resize(ldata->size() + rdata->size(), 0);
+    result.positive_ = !(lhs.positive_ ^ rhs.positive_);
 
-    output.clear();
-    output.resize(ldata.size() + rdata.size(), 0);
-
-    for (std::size_t lindex = 0; lindex != ldata.size(); ++lindex) {
+    for (std::size_t lindex = 0; lindex != ldata->size(); ++lindex) {
         unsigned int carry = 0;
 
-        for (std::size_t rindex = 0; rindex != rdata.size(); ++rindex) {
+        for (std::size_t rindex = 0; rindex != rdata->size(); ++rindex) {
             const std::size_t offset = lindex + rindex;
-            const int value = ldata[lindex] * rdata[rindex] + carry + output[offset];
+            const int value = (*ldata)[lindex] * (*rdata)[rindex] + carry + result.data_[offset];
 
             carry = value / 10;
 
-            output[offset] = value % 10;
+            result.data_[offset] = value % 10;
         }
 
-        output[lindex + rdata.size()] = carry;
+        result.data_[lindex + rdata->size()] = carry;
     }
 
     result.trim();
-    result.positive_ = !(lhs.positive_ ^ rhs.positive_);
 
     return result;
 }
@@ -267,47 +292,13 @@ BigInt & BigInt::operator /= (const BigInt &rhs)
     return (*this);
 }
 
-int BigInt::compare(const BigInt &rhs) const
+BigInt BigInt::abs() const
 {
-    const BigInt &lhs = (*this);
-    const auto *ldata = &(this->data_);
-    const auto *rdata = &(rhs.data_);
+    BigInt retval(*this);
 
-    if (lhs.positive_ && !rhs.positive_) {
-        return 1;
-    }
+    retval.positive_ = true;
 
-    if (!lhs.positive_ && rhs.positive_) {
-        return -1;
-    }
-
-    if (!lhs.positive_ && !rhs.positive_) {
-        std::swap(ldata, rdata);
-    }
-
-    if (ldata->size() > rdata->size()) {
-        return 1;
-    }
-
-    if (ldata->size() < rdata->size()) {
-        return -1;
-    }
-
-    auto liter = ldata->rbegin();
-    auto riter = rdata->rbegin();
-
-    while ((liter != ldata->rend() && (riter != rdata->rend()))) {
-        const int result = (*liter) - (*riter);
-
-        if (result) {
-            return result;
-        }
-
-        ++liter;
-        ++riter;
-    }
-
-    return 0;
+    return retval;
 }
 
 bool BigInt::operator > (const BigInt &rhs) const
@@ -340,30 +331,65 @@ bool BigInt::operator != (const BigInt &rhs) const
     return (this->compare(rhs) != 0);
 }
 
-BigInt BigInt::abs() const
-{
-    BigInt retval(*this);
-
-    retval.positive_ = true;
-
-    return retval;
-}
-
 std::string BigInt::string() const
 {
-    std::string retval;
+    if (this->data_.empty()) {
+        return "";
+    }
 
-    for (auto iter = this->data_.rbegin(); iter != this->data_.rend(); ++iter) {
-        retval.push_back(*iter + '0');
+    std::string retval(this->data_.rbegin(), this->data_.rend());
+
+    for (std::string::iterator iter = retval.begin(); iter != retval.end(); ++iter) {
+        *iter = *iter + '0';
     }
 
     if ((retval.size() == 1) && (retval[0] == '0')) {
         return retval;
     }
 
-    if (this->positive_) {
-        return retval;
+    return (this->positive_) ? retval : ("-" + retval);
+}
+
+int BigInt::compare(const BigInt &rhs) const
+{
+    const BigInt &lhs = (*this);
+
+    if (lhs.positive_ && !rhs.positive_) {
+        return 1;
     }
 
-    return ("-" + retval);
+    if (!lhs.positive_ && rhs.positive_) {
+        return -1;
+    }
+
+    const std::vector<int> *ldata = &(lhs.data_);
+    const std::vector<int> *rdata = &(rhs.data_);
+
+    if (!lhs.positive_ && !rhs.positive_) {
+        std::swap(ldata, rdata);
+    }
+
+    if (ldata->size() > rdata->size()) {
+        return 1;
+    }
+
+    if (ldata->size() < rdata->size()) {
+        return -1;
+    }
+
+    std::vector<int>::const_reverse_iterator liter = ldata->rbegin();
+    std::vector<int>::const_reverse_iterator riter = rdata->rbegin();
+
+    while ((liter != ldata->rend()) && (riter != rdata->rend())) {
+        const int result = (*liter) - (*riter);
+
+        if (result) {
+            return result;
+        }
+
+        ++liter;
+        ++riter;
+    }
+
+    return 0;
 }

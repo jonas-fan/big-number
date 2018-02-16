@@ -13,6 +13,10 @@ public:
     virtual ~BigInt();
 
     // operations
+    BigInt & operator ++ ();
+    BigInt   operator ++ (int);
+    BigInt & operator -- ();
+    BigInt   operator -- (int);
     BigInt   operator +  (const BigInt &rhs) const;
     BigInt   operator -  (const BigInt &rhs) const;
     BigInt   operator *  (const BigInt &rhs) const;
@@ -21,9 +25,9 @@ public:
     BigInt & operator -= (const BigInt &rhs);
     BigInt & operator *= (const BigInt &rhs);
     BigInt & operator /= (const BigInt &rhs);
+    BigInt   abs() const;
 
     // comparers
-    int compare(const BigInt &rhs) const;
     bool operator >  (const BigInt &rhs) const;
     bool operator >= (const BigInt &rhs) const;
     bool operator <  (const BigInt &rhs) const;
@@ -32,8 +36,8 @@ public:
     bool operator != (const BigInt &rhs) const;
 
     // others
-    BigInt abs() const;
     std::string string() const;
+    int compare(const BigInt &rhs) const;
 
 private:
     void assign(const std::string &value);
