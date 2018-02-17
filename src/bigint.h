@@ -17,7 +17,9 @@ public:
     BigInt   operator ++ (int);
     BigInt & operator -- ();
     BigInt   operator -- (int);
+    BigInt   operator +  (int rhs) const;
     BigInt   operator +  (const BigInt &rhs) const;
+    BigInt   operator -  (int rhs) const;
     BigInt   operator -  (const BigInt &rhs) const;
     BigInt   operator *  (const BigInt &rhs) const;
     BigInt   operator /  (const BigInt &rhs) const;

@@ -117,6 +117,43 @@ BigInt BigInt::operator -- (int)
     return retval;
 }
 
+BigInt BigInt::operator + (int rhs) const
+{
+    const BigInt &lhs = (*this);
+
+    if (rhs < 0) {
+        return lhs - (-rhs);
+    }
+    else if (!lhs.positive_) {
+        return BigInt(rhs) - lhs.abs();
+    }
+
+    const std::vector<int> &ldata = lhs.data_;
+
+    BigInt result;
+    result.data_.clear();
+    result.data_.reserve(ldata.size() + 1);
+
+    unsigned int carry = 0;
+
+    for (std::size_t index = 0; (index < ldata.size()) || rhs; ++index) {
+        const int lvalue = (index < ldata.size()) ? ldata[index] : 0;
+        const int rvalue = rhs % 10;
+        const int value = lvalue + rvalue + carry;
+
+        carry = value / 10;
+
+        result.data_.push_back(value % 10);
+
+        rhs /= 10;
+    }
+
+    result.data_.push_back(carry);
+    result.trim();
+
+    return result;
+}
+
 BigInt BigInt::operator + (const BigInt &rhs) const
 {
     const BigInt &lhs = (*this);
@@ -128,26 +165,72 @@ BigInt BigInt::operator + (const BigInt &rhs) const
         return rhs - lhs.abs();
     }
 
-    const std::vector<int> *ldata = &(lhs.data_);
-    const std::vector<int> *rdata = &(rhs.data_);
-    const std::size_t length = std::max(ldata->size(), rdata->size());
+    const std::vector<int> &ldata = lhs.data_;
+    const std::vector<int> &rdata = rhs.data_;
+    const std::size_t length = std::max(ldata.size(), rdata.size());
 
     BigInt result;
-    result.data_.resize(length + 1, 0);
+    result.data_.clear();
+    result.data_.reserve(length + 1);
 
     unsigned int carry = 0;
 
     for (std::size_t index = 0; index < length; ++index) {
-        const int lvalue = (index < ldata->size()) ? (*ldata)[index] : 0;
-        const int rvalue = (index < rdata->size()) ? (*rdata)[index] : 0;
+        const int lvalue = (index < ldata.size()) ? ldata[index] : 0;
+        const int rvalue = (index < rdata.size()) ? rdata[index] : 0;
         const int value = lvalue + rvalue + carry;
 
         carry = value / 10;
 
-        result.data_[index] = value % 10;
+        result.data_.push_back(value % 10);
     }
 
-    result.data_[length] = carry;
+    result.data_.push_back(carry);
+    result.trim();
+
+    return result;
+}
+
+BigInt BigInt::operator - (int rhs) const
+{
+    const BigInt &lhs = (*this);
+
+    if (rhs < 0) {
+        return lhs + (-rhs);
+    }
+    else if (!lhs.positive_) {
+        BigInt result = lhs.abs() + rhs;
+        result.positive_ = false;
+
+        return result;
+    }
+    else if (lhs < rhs) {
+        BigInt result = BigInt(rhs) - lhs;
+        result.positive_ = false;
+
+        return result;
+    }
+
+    const std::vector<int> &ldata = lhs.data_;
+
+    BigInt result;
+    result.data_.clear();
+    result.data_.reserve(ldata.size());
+
+    unsigned int borrow = 0;
+
+    for (std::size_t index = 0; (index < ldata.size()) || rhs; ++index) {
+        const int lvalue = (index < ldata.size()) ? ldata[index] : 0;
+        const int rvalue = (rhs % 10);
+        const int value = lvalue - rvalue - borrow;
+
+        borrow = (value < 0);
+
+        result.data_.push_back((value + 10) % 10);
+
+        rhs /= 10;
+    }
+
     result.trim();
 
     return result;
@@ -161,7 +244,7 @@ BigInt BigInt::operator - (const BigInt &rhs) const
         return lhs + rhs.abs();
     }
     else if (!lhs.positive_) {
-        BigInt result = lhs.abs() + rhs.abs();
+        BigInt result = lhs.abs() + rhs;
         result.positive_ = false;
 
         return result;
@@ -172,7 +255,8 @@ BigInt BigInt::operator - (const BigInt &rhs) const
     const std::size_t length = std::max(ldata->size(), rdata->size());
 
     BigInt result;
-    result.data_.resize(length, 0);
+    result.data_.clear();
+    result.data_.reserve(length);
 
     if (lhs < rhs) {
         result.positive_ = false;
@@ -189,7 +273,7 @@ BigInt BigInt::operator - (const BigInt &rhs) const
 
         borrow = (value < 0);
 
-        result.data_[index] = (value + 10) % 10;
+        result.data_.push_back((value + 10) % 10);
     }
 
     result.trim();
@@ -200,26 +284,26 @@ BigInt BigInt::operator - (const BigInt &rhs) const
 BigInt BigInt::operator * (const BigInt &rhs) const
 {
     const BigInt &lhs = (*this);
-    const std::vector<int> *ldata = &(lhs.data_);
-    const std::vector<int> *rdata = &(rhs.data_);
+    const std::vector<int> &ldata = lhs.data_;
+    const std::vector<int> &rdata = rhs.data_;
 
     BigInt result;
-    result.data_.resize(ldata->size() + rdata->size(), 0);
+    result.data_.resize(ldata.size() + rdata.size(), 0);
     result.positive_ = !(lhs.positive_ ^ rhs.positive_);
 
-    for (std::size_t lindex = 0; lindex != ldata->size(); ++lindex) {
+    for (std::size_t lindex = 0; lindex < ldata.size(); ++lindex) {
         unsigned int carry = 0;
 
-        for (std::size_t rindex = 0; rindex != rdata->size(); ++rindex) {
+        for (std::size_t rindex = 0; rindex < rdata.size(); ++rindex) {
             const std::size_t offset = lindex + rindex;
-            const int value = (*ldata)[lindex] * (*rdata)[rindex] + carry + result.data_[offset];
+            const int value = ldata[lindex] * rdata[rindex] + carry + result.data_[offset];
 
             carry = value / 10;
 
             result.data_[offset] = value % 10;
         }
 
-        result.data_[lindex + rdata->size()] = carry;
+        result.data_[lindex + rdata.size()] = carry;
     }
 
     result.trim();
