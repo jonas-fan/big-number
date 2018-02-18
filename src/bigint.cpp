@@ -28,6 +28,19 @@ static inline bool isNumber(const std::string &value)
     return true;
 }
 
+static inline unsigned int intlen(long long int value)
+{
+    unsigned int length = 0;
+
+    while (value) {
+        value /= 10;
+
+        ++length;
+    }
+
+    return length;
+}
+
 BigInt::BigInt()
     : BigInt("0")
 {
@@ -281,6 +294,36 @@ BigInt BigInt::operator - (const BigInt &rhs) const
     return result;
 }
 
+BigInt BigInt::operator * (int rhs) const
+{
+    const BigInt &lhs = (*this);
+    const std::vector<int> &ldata = lhs.data_;
+    const unsigned int rhs_size = intlen(rhs);
+
+    BigInt result;
+    result.data_.resize(ldata.size() + rhs_size, 0);
+    result.positive_ = !(lhs.positive_ ^ (rhs >= 0 ? 1 : 0));
+
+    for (std::size_t lindex = 0; lindex < ldata.size(); ++lindex) {
+        unsigned int carry = 0;
+
+        for (int rdata = rhs; rdata; rdata /= 10) {
+            const std::size_t offset = lindex + rhs_size - intlen(rdata);
+            const int value = ldata[lindex] * (rdata % 10) + carry + result.data_[offset];
+
+            carry = value / 10;
+
+            result.data_[offset] = value % 10;
+        }
+
+        result.data_[lindex + rhs_size] = carry;
+    }
+
+    result.trim();
+
+    return result;
+}
+
 BigInt BigInt::operator * (const BigInt &rhs) const
 {
     const BigInt &lhs = (*this);
@@ -316,15 +359,13 @@ BigInt BigInt::operator / (const BigInt &rhs) const
     const bool positive = !(this->positive_ ^ rhs.positive_);
     BigInt x = this->abs();
     BigInt y = rhs.abs();
-    BigInt result("0");
+    BigInt result;
 
     if ((y == 0) || (x < y)) {
         return result;
     }
 
-    std::size_t index = x.data_.size() - y.data_.size() + 1;
-
-    for (; (index > 0) && (x > 0); --index) {
+    for (std::size_t index = x.data_.size() - y.data_.size() + 1; (index > 0) && (x > 0); --index) {
         std::string initializer(index, '0');
 
         for (unsigned int number = 9; number > 0; --number) {
@@ -376,15 +417,6 @@ BigInt & BigInt::operator /= (const BigInt &rhs)
     return (*this);
 }
 
-BigInt BigInt::abs() const
-{
-    BigInt retval(*this);
-
-    retval.positive_ = true;
-
-    return retval;
-}
-
 bool BigInt::operator > (const BigInt &rhs) const
 {
     return (this->compare(rhs) > 0);
@@ -432,6 +464,15 @@ std::string BigInt::string() const
     }
 
     return (this->positive_) ? retval : ("-" + retval);
+}
+
+BigInt BigInt::abs() const
+{
+    BigInt retval(*this);
+
+    retval.positive_ = true;
+
+    return retval;
 }
 
 int BigInt::compare(const BigInt &rhs) const

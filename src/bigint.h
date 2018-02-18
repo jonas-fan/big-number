@@ -12,24 +12,28 @@ public:
     BigInt(const std::string &value);
     virtual ~BigInt();
 
-    // operations
+    // Increment & Decrement
     BigInt & operator ++ ();
     BigInt   operator ++ (int);
     BigInt & operator -- ();
     BigInt   operator -- (int);
-    BigInt   operator +  (int rhs) const;
-    BigInt   operator +  (const BigInt &rhs) const;
-    BigInt   operator -  (int rhs) const;
-    BigInt   operator -  (const BigInt &rhs) const;
-    BigInt   operator *  (const BigInt &rhs) const;
-    BigInt   operator /  (const BigInt &rhs) const;
+
+    // Arithmetic
+    BigInt operator + (int rhs) const;
+    BigInt operator + (const BigInt &rhs) const;
+    BigInt operator - (int rhs) const;
+    BigInt operator - (const BigInt &rhs) const;
+    BigInt operator * (int rhs) const;
+    BigInt operator * (const BigInt &rhs) const;
+    BigInt operator / (const BigInt &rhs) const;
+
+    // Assignment
     BigInt & operator += (const BigInt &rhs);
     BigInt & operator -= (const BigInt &rhs);
     BigInt & operator *= (const BigInt &rhs);
     BigInt & operator /= (const BigInt &rhs);
-    BigInt   abs() const;
 
-    // comparers
+    // Comparsion
     bool operator >  (const BigInt &rhs) const;
     bool operator >= (const BigInt &rhs) const;
     bool operator <  (const BigInt &rhs) const;
@@ -37,8 +41,9 @@ public:
     bool operator == (const BigInt &rhs) const;
     bool operator != (const BigInt &rhs) const;
 
-    // others
+    // Others
     std::string string() const;
+    BigInt abs() const;
     int compare(const BigInt &rhs) const;
 
 private:
