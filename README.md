@@ -29,7 +29,7 @@ An implementation of big integer in C++.
 
 ```cpp
 BigInt num1("123456789123456789");
-BigInt num2("987654321987654321123456789123456789");
+BigInt num2("987654321987654321");
 BigInt num3;
 
 // 1111111111111111110
